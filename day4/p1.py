@@ -21,31 +21,27 @@ def func():
     left = [x * 5 for x in range(df_mask.shape[0] // 5)]
     right = left[1:]
     right.append(df_mask.shape[0])
-    df: pd.DataFrame
-    df_mask: pd.DataFrame
-
-    def helper(df: pd.DataFrame, df_mask: pd.DataFrame):
-        for l, r in zip(left, right):
-            a_mask = df_mask.iloc[l:r, :]
-            sum0 = a_mask.sum(0, numeric_only=True)
-            sum1 = a_mask.sum(1, numeric_only=True)
-            idx0 = sum0[sum0 == 5]
-            idx1 = sum1[sum1 == 5]
-            if not idx0.empty:
-                a_data = df.iloc[l:r, :]
-                sum = a_data[a_mask == 0].sum().sum()
-                return int(sum)
-            if not idx1.empty:
-                a_data = df.iloc[l:r, :]
-                sum = a_data[a_mask == 0].sum().sum()
-                return int(sum)
-        return None
-
+    stop = False
     for number in numbers:
         df_mask[df == number] = 1
-        res = helper(df, df_mask)
-        if res is not None:
-            return number * res
+        for l, r in zip(left, right):
+            a_mask = df_mask.iloc[l:r, :]
+            sum_col = a_mask.sum(0, numeric_only=True)
+            sum_row = a_mask.sum(1, numeric_only=True)
+            idx_col = sum_col[sum_col == 5]
+            idx_row = sum_row[sum_row == 5]
+            if not idx_col.empty:
+                a_data = df.iloc[l:r, :]
+                sum = a_data[a_mask == 0].sum().sum()
+                stop = True
+                break
+            if not idx_row.empty:
+                a_data = df.iloc[l:r, :]
+                sum = a_data[a_mask == 0].sum().sum()
+                stop = True
+                break
+        if stop:
+            return int(sum) * number
 
 
 if __name__ == '__main__':
