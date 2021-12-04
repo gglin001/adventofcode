@@ -5,18 +5,31 @@ import numpy as np
 def func():
     cur_dir = os.path.dirname(os.path.realpath(__file__))
     fp = f'{cur_dir}/input.txt'
-    arr = np.loadtxt(fp, dtype=str)
+    arr_raw = np.loadtxt(fp, dtype=str)
 
-    arr1 = []
-    for row in arr:
-        arr1.append([True if x == '1' else False for x in row])
-    arr1 = np.asarray(arr1)
+    arr = []
+    for row in arr_raw:
+        arr.append([True if x == '1' else False for x in row])
+    arr = np.asarray(arr)
+
+    h, w = arr.shape
+    ones = []
+    zeros = []
+    for i in range(w):
+        ones_i = []
+        zeros_i = []
+        for j in range(h):
+            if arr[j, i]:
+                ones_i.append(j)
+            else:
+                zeros_i.append(j)
+        ones.append(ones_i)
+        zeros.append(zeros_i)
 
     gamma_rate = []
     epsilon = []
-    count, bits = arr1.shape
-    for i in range(bits):
-        if np.sort(arr1[:, i])[count // 2]:
+    for i in range(w):
+        if len(ones[i]) > len(zeros[i]):
             gamma_rate.append(1)
             epsilon.append(0)
         else:

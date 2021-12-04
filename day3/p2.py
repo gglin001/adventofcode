@@ -5,14 +5,14 @@ import numpy as np
 def func():
     cur_dir = os.path.dirname(os.path.realpath(__file__))
     fp = f'{cur_dir}/input.txt'
-    arr = np.loadtxt(fp, dtype=str)
+    arr_raw = np.loadtxt(fp, dtype=str)
 
-    arr1 = []
-    for row in arr:
-        arr1.append([1 if x == '1' else 0 for x in row])
-    arr1 = np.asarray(arr1)
+    arr = []
+    for row in arr_raw:
+        arr.append([True if x == '1' else False for x in row])
+    arr = np.asarray(arr)
 
-    def ff(arr, indexs):
+    def helper(arr, indexs):
         indexs = list(indexs)
         ones = []
         zeros = []
@@ -29,34 +29,33 @@ def func():
             zeros.append(zeros_i)
         return ones, zeros
 
-    h, w = arr1.shape
+    h, w = arr.shape
     oxygen = set(x for x in range(h))
     for i in range(w):
-        ones, zeros = ff(arr1, oxygen)
+        ones, zeros = helper(arr, oxygen)
         if len(oxygen) == 1:
             break
         if len(ones[i]) >= len(zeros[i]):
             oxygen = oxygen.intersection(set(ones[i]))
         else:
             oxygen = oxygen.intersection(set(zeros[i]))
-    ox = [1 if x else 0 for x in arr1[oxygen.pop()]]
-    ox = int(''.join(str(x) for x in ox), 2)
+    oxygen = [1 if x else 0 for x in arr[oxygen.pop()]]
+    oxygen = int(''.join(str(x) for x in oxygen), 2)
 
     co2 = set(x for x in range(h))
     for i in range(w):
-        ones, zeros = ff(arr1, co2)
+        ones, zeros = helper(arr, co2)
         if len(co2) == 1:
             break
         if len(zeros[i]) > len(ones[i]):
             co2 = co2.intersection(set(ones[i]))
         else:
             co2 = co2.intersection(set(zeros[i]))
-    co2 = [1 if x else 0 for x in arr1[co2.pop()]]
+    co2 = [1 if x else 0 for x in arr[co2.pop()]]
     co2 = int(''.join(str(x) for x in co2), 2)
-    return ox * co2
+    return oxygen * co2
 
 
 if __name__ == '__main__':
     res = func()
     print(res)
-    # 482500
