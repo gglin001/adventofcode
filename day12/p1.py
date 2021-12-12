@@ -6,6 +6,7 @@ def func():
     fp = f'{cur_dir}/input.txt'
     # fp = f'{cur_dir}/sample.txt'
     # fp = f'{cur_dir}/sample2.txt'
+    # fp = f'{cur_dir}/sample3.txt'
     with open(fp, 'r') as f:
         lines = f.readlines()
 
