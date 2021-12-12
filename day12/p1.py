@@ -18,7 +18,7 @@ def func():
         for c in [x, y]:
             if c.isupper():
                 big.add(c)
-            else:
+            elif c not in ['start', 'end']:
                 small.add(c)
 
         if x in graph:
@@ -34,16 +34,22 @@ def func():
     fin_paths = []
     paths = []
     paths.append(['start'])
-    for path in paths:
+    for idx, path in enumerate(paths):
+        # print(idx)
         last = path[-1]
         nexts = graph[last]
         for next in nexts:
             if next in small and next in path:
                 continue
-            paths.append([*path, next])
+
+            if next == 'start':
+                continue
+
             if next == 'end':
                 fin_paths.append([*path, next])
                 continue
+
+            paths.append([*path, next])
 
     return len(fin_paths)
 
